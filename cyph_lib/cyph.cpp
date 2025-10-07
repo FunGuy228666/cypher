@@ -20,6 +20,12 @@ void rotate(int *inp, int *temp, int n, int len) {
     for (int i = n; i < len; i++) inp[i-n] = temp[i];
     for (int i = len-n; i < len; i++) inp[i] = temp[i-(len-n)];
 }
+int inp_to_n_rot(int* inp, int max_n, int len) {
+    int sum = 0;
+    for (int i = 0; i < len; i++) sum += inp[i];
+    if (sum < 0) sum *= -1;
+    return sum % (max_n-2) + 1;
+}
 void cyph_blocks(int *data, int *rt, int *key, int *rtn, int *keyn, int *out, int *temp, int *temp2, int block_size, int len) {
     int blocks = len / block_size;
     if (len % block_size != 0) blocks++;
@@ -29,7 +35,7 @@ void cyph_blocks(int *data, int *rt, int *key, int *rtn, int *keyn, int *out, in
         xor_with_key(data+(i*block_size), keyn, temp, block_size);
         rearrange(temp, rtn, out+(i*block_size), block_size);
         mymemcpy(keyn, out+(i*block_size), block_size);
-        rotate(rtn, temp, 1, block_size);
+        rotate(rtn, temp, inp_to_n_rot(data+(i*block_size), block_size-1, block_size), block_size);
     }
     if (len % block_size != 0) {
         mymemset(temp, 0, block_size);
@@ -46,7 +52,7 @@ void decyph_blocks(int *data, int *rt, int *key, int *rtn, int *keyn, int *out, 
         derearrange(data+(i*block_size), rtn, temp, block_size);
         xor_with_key(temp, keyn, out+(i*block_size), block_size);
         mymemcpy(keyn, temp2, block_size);
-        rotate(rtn, temp2, 1, block_size);
+        rotate(rtn, temp2, inp_to_n_rot(out+(i*block_size), block_size-1, block_size), block_size);
     }
 }
 int* cypher_i(int *data, int *rt, int *key, int block_size, int len) {
@@ -75,6 +81,7 @@ int* decypher_i(int *data, int *rt, int *key, int block_size, int len) {
     decyph_blocks(data, rt, key, rtn, keyn, out, temp, temp2, block_size, len);
     int new_len = out_len * block_size;
     while (out[new_len-1] == 0) new_len--;
+    //for (int i = 0; i < 64; i++) std::cout << out[i] << ", ";
     int *out_n = (int *)malloc(sizeof(int) * (new_len+1));
     out_n[0] = new_len;
     memcpy(out_n+1, out, new_len*sizeof(int));
@@ -84,5 +91,4 @@ int* decypher_i(int *data, int *rt, int *key, int block_size, int len) {
     free(rtn);
     free(keyn);
     return out_n;
-
 }
