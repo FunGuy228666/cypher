@@ -75,7 +75,6 @@ int* decypher_i(int *data, int *rt, int *key, int block_size, int len) {
     decyph_blocks(data, rt, key, rtn, keyn, out, temp, temp2, block_size, len);
     int new_len = out_len * block_size;
     while (out[new_len-1] == 0) new_len--;
-    //for (int i = 0; i < 64; i++) std::cout << out[i] << ", ";
     int *out_n = (int *)malloc(sizeof(int) * (new_len+1));
     out_n[0] = new_len;
     memcpy(out_n+1, out, new_len*sizeof(int));
@@ -85,4 +84,5 @@ int* decypher_i(int *data, int *rt, int *key, int block_size, int len) {
     free(rtn);
     free(keyn);
     return out_n;
+
 }
