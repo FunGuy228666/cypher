@@ -19,3 +19,6 @@ void decyph_blocks(int *data, int *rt, int *key, int *rtn, int *keyn, int *out, 
 int* cypher(int *data, int *rt, int *key, int block_size, int len);
 
 int* decypher(int *data, int *rt, int *key, int block_size, int len);
+
+int inp_to_n_rot(int* inp, int max_n, int len);
+
